@@ -3,6 +3,7 @@ import {
   faInstagram
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 import styled from "styled-components";
 import AuthLayout from "../components/auth/auth-layout";
 import BottomBox from "../components/auth/bottom-box";
@@ -20,29 +21,58 @@ const FacebookLogin = styled.div`
   }
 `;
 
-const Login = () => (
-  <AuthLayout>
-    <FormBox>
-      <div>
-        <FontAwesomeIcon icon={faInstagram} size="3x" />
-      </div>
-      <form>
-        <Input type="text" placeholder="Username" />
-        <Input type="password" placeholder="Password" />
-        <Button type="submit" value="Log in" />
-      </form>
-      <Separator />
-      <FacebookLogin>
-        <FontAwesomeIcon icon={faFacebookSquare} />
-        <span>Log in with Facebook</span>
-      </FacebookLogin>
-    </FormBox>
-    <BottomBox
-      cta="Don't have an account?"
-      linkText="Sign up"
-      link={routes.signUp}
-    />
-  </AuthLayout>
-);
+function Login() {
+  const [username, setUsername] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const onUsernameChange: React.ChangeEventHandler<HTMLInputElement> = (
+    event
+  ) => {
+    setUsername(event.target.value);
+  };
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault();
+    if (username === "") {
+      setUsernameError("Not empty pls.");
+    }
+    if (username.length < 10) {
+      setUsernameError("too short");
+    }
+  };
+
+  return (
+    <AuthLayout>
+      <FormBox>
+        <div>
+          <FontAwesomeIcon icon={faInstagram} size="3x" />
+        </div>
+        <form onSubmit={handleSubmit}>
+          {usernameError}
+          <Input
+            type="text"
+            onChange={onUsernameChange}
+            value={username}
+            placeholder="Username"
+          />
+          <Input type="password" placeholder="Password" />
+          <Button
+            type="submit"
+            value="Log in"
+            disabled={username === "" && username.length < 10}
+          />
+        </form>
+        <Separator />
+        <FacebookLogin>
+          <FontAwesomeIcon icon={faFacebookSquare} />
+          <span>Log in with Facebook</span>
+        </FacebookLogin>
+      </FormBox>
+      <BottomBox
+        cta="Don't have an account?"
+        linkText="Sign up"
+        link={routes.signUp}
+      />
+    </AuthLayout>
+  );
+}
 
 export default Login;
