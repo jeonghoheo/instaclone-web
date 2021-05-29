@@ -16,6 +16,7 @@ import Input from "../components/auth/input";
 import PageTitle from "../components/auth/page-title";
 import Separator from "../components/auth/separator";
 import routes from "../routes";
+import { logUserIn } from "../apollo";
 
 interface IFieldValues {
   username: string;
@@ -47,6 +48,7 @@ function Login() {
     handleSubmit,
     getValues,
     setError,
+    clearErrors,
     formState: { errors, isValid }
   } = useForm<IFieldValues>({
     mode: "onChange"
@@ -57,13 +59,20 @@ function Login() {
         login: { ok, error, token }
       } = data;
       if (!ok) {
-        setError("result", {
+        return setError("result", {
           message: error
         });
+      }
+      if (token) {
+        logUserIn(token);
       }
     },
     [setError]
   );
+
+  const clearLoginError = useCallback(() => {
+    clearErrors("result");
+  }, [clearErrors]);
 
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted
@@ -81,6 +90,25 @@ function Login() {
     },
     [loading, getValues, login]
   );
+
+  const usernameRegister = register("username", {
+    shouldUnregister: true,
+    required: "Username is required.",
+    minLength: {
+      value: 5,
+      message: "Username should be longer than 5 characters."
+    }
+  });
+
+  const passwordRegister = register("password", {
+    shouldUnregister: true,
+    required: "Password is required.",
+    minLength: {
+      value: 2,
+      message: "Password should be longer than 2 characters."
+    }
+  });
+
   return (
     <AuthLayout>
       <PageTitle title="Login" />
@@ -90,22 +118,22 @@ function Login() {
         </div>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
-            {...register("username", {
-              required: "Username is required.",
-              minLength: {
-                value: 5,
-                message: "Username should be longer than 5 characters."
-              }
-            })}
+            {...usernameRegister}
+            onChange={(event) => {
+              clearLoginError();
+              usernameRegister.onChange(event);
+            }}
             type="text"
             hasError={Boolean(errors.username?.message)}
             placeholder="Username"
           />
           <FormError message={errors.username?.message} />
           <Input
-            {...register("password", {
-              required: "Password is required."
-            })}
+            {...passwordRegister}
+            onChange={(event) => {
+              clearLoginError();
+              passwordRegister.onChange(event);
+            }}
             type="password"
             hasError={Boolean(errors.password?.message)}
             placeholder="Password"
