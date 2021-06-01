@@ -1,4 +1,6 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import * as H from "history";
+import routes from "./routes";
 
 const TOKEN = "token";
 
@@ -9,8 +11,10 @@ export const logUserIn = (token: string) => {
   isLoggedInVar(true);
 };
 
-export const logUserOut = () => {
+export const logUserOut = (history: H.History<H.LocationState>) => () => {
   localStorage.removeItem(TOKEN);
+  window.location.reload();
+  history.replace(routes.home);
   isLoggedInVar(false);
 };
 

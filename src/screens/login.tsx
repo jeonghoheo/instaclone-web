@@ -17,6 +17,7 @@ import PageTitle from "../components/auth/page-title";
 import Separator from "../components/auth/separator";
 import routes from "../routes";
 import { logUserIn } from "../apollo";
+import { useLocation } from "react-router";
 
 interface IFieldValues {
   username: string;
@@ -32,6 +33,10 @@ const FacebookLogin = styled.div`
   }
 `;
 
+const Notification = styled.div`
+  color: #2ecc71;
+`;
+
 const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
     login(input: { username: $username, password: $password }) {
@@ -43,6 +48,8 @@ const LOGIN_MUTATION = gql`
 `;
 
 function Login() {
+  const location =
+    useLocation<{ message?: string; username?: string; password?: string }>();
   const {
     register,
     handleSubmit,
@@ -51,7 +58,11 @@ function Login() {
     clearErrors,
     formState: { errors, isValid }
   } = useForm<IFieldValues>({
-    mode: "onChange"
+    mode: "onChange",
+    defaultValues: {
+      username: location?.state?.username || "",
+      password: location?.state?.password || ""
+    }
   });
   const onCompleted = useCallback(
     (data) => {
@@ -116,6 +127,7 @@ function Login() {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
+        <Notification>{location?.state?.message}</Notification>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <Input
             {...usernameRegister}

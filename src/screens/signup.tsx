@@ -60,27 +60,35 @@ const CREATE_ACCOUNT_MUTATION = gql`
 
 function SignUp() {
   const history = useHistory();
+
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isValid }
+  } = useForm<IFieldValues>({
+    mode: "onChange"
+  });
+
   const onCompleted = useCallback(
     (data) => {
       const {
-        createAccount: { ok, error }
+        createAccount: { ok }
       } = data;
       if (!ok) {
         return;
       }
-      history.push(routes.home);
+      const { username, password } = getValues();
+      history.push(routes.home, {
+        message: "Account created. Please log in.",
+        username,
+        password
+      });
     },
-    [history]
+    [history, getValues]
   );
   const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
     onCompleted
-  });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid }
-  } = useForm<IFieldValues>({
-    mode: "onChange"
   });
 
   const onSubmitValid = useCallback<SubmitHandler<IFieldValues>>(
@@ -113,6 +121,7 @@ function SignUp() {
             })}
             type="text"
             placeholder="First Name"
+            hasError={Boolean(errors.firstName?.message)}
           />
           <Input
             {...register("lastName", {
@@ -120,6 +129,7 @@ function SignUp() {
             })}
             type="text"
             placeholder="Last Name"
+            hasError={Boolean(errors.lastName?.message)}
           />
           <Input
             {...register("email", {
@@ -127,6 +137,7 @@ function SignUp() {
             })}
             type="email"
             placeholder="Email"
+            hasError={Boolean(errors.email?.message)}
           />
           <Input
             {...register("username", {
@@ -134,6 +145,7 @@ function SignUp() {
             })}
             type="text"
             placeholder="Username"
+            hasError={Boolean(errors.username?.message)}
           />
           <Input
             {...register("password", {
@@ -141,6 +153,7 @@ function SignUp() {
             })}
             type="password"
             placeholder="Password"
+            hasError={Boolean(errors.password?.message)}
           />
           <Button
             type="submit"
