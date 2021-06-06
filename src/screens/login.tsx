@@ -18,11 +18,10 @@ import Separator from "../components/auth/separator";
 import routes from "../routes";
 import { logUserIn } from "../apollo";
 import { useLocation } from "react-router";
+import { login, loginVariables } from "../__generated__/login";
 
-interface IFieldValues {
-  username: string;
-  password: string;
-  result: any;
+interface IFieldValues extends loginVariables {
+  result?: string;
 }
 
 const FacebookLogin = styled.div`
@@ -85,9 +84,12 @@ function Login() {
     clearErrors("result");
   }, [clearErrors]);
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
-    onCompleted
-  });
+  const [login, { loading }] = useMutation<login, loginVariables>(
+    LOGIN_MUTATION,
+    {
+      onCompleted
+    }
+  );
   const onSubmitValid = useCallback<SubmitHandler<IFieldValues>>(
     (data) => {
       if (loading) {

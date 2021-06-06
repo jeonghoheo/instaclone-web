@@ -14,14 +14,10 @@ import Input from "../components/auth/input";
 import PageTitle from "../components/auth/page-title";
 import { FatLink } from "../components/shared";
 import routes from "../routes";
-
-interface IFieldValues {
-  firstName: string;
-  lastName: string;
-  username: string;
-  email: string;
-  password: string;
-}
+import {
+  createAccount,
+  createAccountVariables
+} from "../__generated__/createAccount";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -66,7 +62,7 @@ function SignUp() {
     handleSubmit,
     getValues,
     formState: { errors, isValid }
-  } = useForm<IFieldValues>({
+  } = useForm<createAccountVariables>({
     mode: "onChange"
   });
 
@@ -87,11 +83,14 @@ function SignUp() {
     },
     [history, getValues]
   );
-  const [createAccount, { loading }] = useMutation(CREATE_ACCOUNT_MUTATION, {
+  const [createAccount, { loading }] = useMutation<
+    createAccount,
+    createAccountVariables
+  >(CREATE_ACCOUNT_MUTATION, {
     onCompleted
   });
 
-  const onSubmitValid = useCallback<SubmitHandler<IFieldValues>>(
+  const onSubmitValid = useCallback<SubmitHandler<createAccountVariables>>(
     (data) => {
       if (loading) {
         return;
@@ -124,9 +123,7 @@ function SignUp() {
             hasError={Boolean(errors.firstName?.message)}
           />
           <Input
-            {...register("lastName", {
-              required: "Last Name is required"
-            })}
+            {...register("lastName")}
             type="text"
             placeholder="Last Name"
             hasError={Boolean(errors.lastName?.message)}
