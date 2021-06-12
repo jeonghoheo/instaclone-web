@@ -4,8 +4,12 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faCompass, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { isLoggedInVar } from "../apollo";
+import useUser from "../hooks/useUser";
+import routes from "../routes";
+import Home from "../screens/home";
 
 const SHeader = styled.header`
   width: 100%;
@@ -33,6 +37,7 @@ const Icon = styled.span`
 
 function Header() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const loggedInUser = useUser();
   return (
     <SHeader>
       <Wrapper>
@@ -52,7 +57,11 @@ function Header() {
                 <FontAwesomeIcon icon={faUser} size="lg" />
               </Icon>
             </Fragment>
-          ) : null}
+          ) : (
+            <Link to={routes.home}>
+              <Home />
+            </Link>
+          )}
         </Column>
       </Wrapper>
     </SHeader>
