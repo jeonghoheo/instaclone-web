@@ -11,6 +11,7 @@ const ME_QUERY = gql`
       error
       me {
         id
+        username
         avatar
       }
     }
@@ -28,7 +29,7 @@ function useUser() {
       logUserOut(history)();
     }
   }, [data, history]);
-  return {};
+  return { data };
 }
 
 export default useUser;
