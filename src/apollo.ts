@@ -34,6 +34,7 @@ export const logUserIn = (token: string) => {
 };
 
 export const logUserOut = (history: H.History<H.LocationState>) => () => {
+  console.log("logout");
   localStorage.removeItem(TOKEN);
   window.location.reload();
   history.replace(routes.home);
