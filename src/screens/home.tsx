@@ -1,4 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
+import {
+  faBookmark,
+  faComment,
+  faHeart,
+  faPaperPlane
+} from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router";
 import styled from "styled-components";
 import { logUserOut } from "../apollo";
@@ -34,13 +41,39 @@ const PhotoContainer = styled.div`
   margin-bottom: 20px;
 `;
 const PhotoHeader = styled.div`
-  padding: 5px 10px;
   display: flex;
   align-items: center;
+  padding: 15px;
 `;
 
 const Username = styled(FatText)`
-  margin-left: 5px;
+  margin-left: 15px;
+`;
+
+const PhotoFile = styled.img`
+  width: 100%;
+`;
+
+const PhotoData = styled.div`
+  padding: 15px;
+`;
+
+const PhotoActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  div {
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const PhotoAction = styled.div`
+  margin-right: 10px;
+`;
+const Likes = styled(FatText)`
+  margin-top: 15px;
+  display: block;
 `;
 
 function Home() {
@@ -53,9 +86,35 @@ function Home() {
       {data?.seeFeed.photos?.map((photo) => (
         <PhotoContainer key={photo.id}>
           <PhotoHeader>
-            <Avatar url={photo.user?.avatar || ""} />
+            <Avatar url={photo.user?.avatar || ""} lg />
             <Username>{photo.user?.username}</Username>
           </PhotoHeader>
+          <PhotoFile src={photo.file} />
+          <PhotoData>
+            <PhotoActions>
+              <div>
+                <PhotoAction>
+                  <FontAwesomeIcon size={"2x"} icon={faHeart} />
+                </PhotoAction>
+                <PhotoAction>
+                  <FontAwesomeIcon size={"2x"} icon={faComment} />
+                </PhotoAction>
+                <PhotoAction>
+                  <FontAwesomeIcon size={"2x"} icon={faPaperPlane} />
+                </PhotoAction>
+              </div>
+              <div>
+                <FontAwesomeIcon size="2x" icon={faBookmark} />
+              </div>
+            </PhotoActions>
+            <Likes>
+              {photo.likes && photo.likes > 1
+                ? `${photo.likes} likes`
+                : photo.likes
+                ? `${photo.likes} like`
+                : `0 like`}
+            </Likes>
+          </PhotoData>
         </PhotoContainer>
       ))}
     </div>
