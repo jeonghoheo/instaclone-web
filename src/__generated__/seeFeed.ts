@@ -16,6 +16,7 @@ export interface seeFeed_seeFeed_photos_user {
 export interface seeFeed_seeFeed_photos {
   __typename: "Photo";
   id: number;
+  isLiked: boolean | null;
   user: seeFeed_seeFeed_photos_user | null;
   file: string;
   caption: string | null;
