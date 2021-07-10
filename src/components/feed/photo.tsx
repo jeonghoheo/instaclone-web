@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, MutationUpdaterFn, useMutation } from "@apollo/client";
 import {
   faBookmark,
   faComment,
@@ -7,6 +7,7 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback } from "react";
 import styled from "styled-components";
 import { seeFeed_seeFeed_photos } from "../../__generated__/seeFeed";
 import {
@@ -74,14 +75,35 @@ const Likes = styled(FatText)`
   display: block;
 `;
 function Photo(photo: seeFeed_seeFeed_photos) {
-  const [toggleLikeMutation, { loading }] = useMutation<
-    toggleLike,
-    toggleLikeVariables
-  >(TOGGLE_LIKE_MUTATION, {
-    variables: {
-      id: photo.id
+  const updateToggleLike = useCallback<MutationUpdaterFn<toggleLike>>(
+    (cache, result) => {
+      const ok = result.data?.toggleLike.ok;
+      if (ok) {
+        cache.writeFragment({
+          id: `Photo:${photo.id}`,
+          fragment: gql`
+            fragment isLike on Photo {
+              isLiked
+            }
+          `,
+          data: {
+            isLiked: !photo.isLiked
+          }
+        });
+      }
+    },
+    [photo]
+  );
+
+  const [toggleLikeMutation] = useMutation<toggleLike, toggleLikeVariables>(
+    TOGGLE_LIKE_MUTATION,
+    {
+      variables: {
+        id: photo.id
+      },
+      update: updateToggleLike
     }
-  });
+  );
   return (
     <PhotoContainer>
       <PhotoHeader>

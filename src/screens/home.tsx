@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useHistory } from "react-router";
 import { logUserOut } from "../apollo";
+import PageTitle from "../components/auth/page-title";
 import Photo from "../components/feed/photo";
 import { seeFeed } from "../__generated__/seeFeed";
 
@@ -32,6 +33,7 @@ function Home() {
   const history = useHistory();
   return (
     <div>
+      <PageTitle title="Home" />
       <h1>Welcome we did it!</h1>
       <button onClick={logUserOut(history)}>Log out now!</button>
       {data?.seeFeed.photos?.map((photo) => (
