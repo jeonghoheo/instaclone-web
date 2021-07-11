@@ -13,6 +13,21 @@ export interface seeFeed_seeFeed_photos_user {
   avatar: string | null;
 }
 
+export interface seeFeed_seeFeed_photos_comments_user {
+  __typename: "User";
+  username: string;
+  avatar: string | null;
+}
+
+export interface seeFeed_seeFeed_photos_comments {
+  __typename: "Comment";
+  id: number;
+  user: seeFeed_seeFeed_photos_comments_user;
+  payload: string;
+  isMine: boolean | null;
+  createdAt: any;
+}
+
 export interface seeFeed_seeFeed_photos {
   __typename: "Photo";
   id: number;
@@ -21,7 +36,8 @@ export interface seeFeed_seeFeed_photos {
   file: string;
   caption: string | null;
   likes: number | null;
-  comments: number | null;
+  comments: seeFeed_seeFeed_photos_comments[] | null;
+  commentNumber: number | null;
   createdAt: any;
   isMine: boolean | null;
 }

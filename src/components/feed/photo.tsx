@@ -74,7 +74,33 @@ const Likes = styled(FatText)`
   margin-top: 15px;
   display: block;
 `;
-function Photo({ id, user, file, isLiked, likes }: seeFeed_seeFeed_photos) {
+
+const Comments = styled.div`
+  margin-top: 20px;
+`;
+const Comment = styled.div``;
+const CommentCaption = styled.span`
+  margin-left: 10px;
+`;
+
+const CommentCount = styled.span`
+  opacity: 0.7;
+  margin: 10px 0px;
+  display: block;
+  font-weight: 600;
+  font-size: 10px;
+`;
+
+function Photo({
+  id,
+  user,
+  file,
+  isLiked,
+  likes,
+  caption,
+  commentNumber,
+  comments
+}: seeFeed_seeFeed_photos) {
   const updateToggleLike = useCallback<MutationUpdaterFn<toggleLike>>(
     (cache, result) => {
       const {
@@ -149,6 +175,15 @@ function Photo({ id, user, file, isLiked, likes }: seeFeed_seeFeed_photos) {
             ? `${likes} like`
             : `0 like`}
         </Likes>
+        <Comments>
+          <Comment>
+            {user ? <FatText>{user.username}</FatText> : null}
+            <CommentCaption>{caption}</CommentCaption>
+          </Comment>
+          <CommentCount>
+            {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
+          </CommentCount>
+        </Comments>
       </PhotoData>
     </PhotoContainer>
   );
