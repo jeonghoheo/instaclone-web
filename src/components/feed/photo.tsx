@@ -74,32 +74,39 @@ const Likes = styled(FatText)`
   margin-top: 15px;
   display: block;
 `;
-function Photo(photo: seeFeed_seeFeed_photos) {
+function Photo({ id, user, file, isLiked, likes }: seeFeed_seeFeed_photos) {
   const updateToggleLike = useCallback<MutationUpdaterFn<toggleLike>>(
     (cache, result) => {
-      const ok = result.data?.toggleLike.ok;
+      const {
+        toggleLike: { ok }
+      } = result.data as toggleLike;
       if (ok) {
+        const likesFragment = likes ? likes : 0;
+        const fragmentId = `Photo:${id}`;
+        const fragment = gql`
+          fragment isLike on Photo {
+            isLiked
+            likes
+          }
+        `;
         cache.writeFragment({
-          id: `Photo:${photo.id}`,
-          fragment: gql`
-            fragment isLike on Photo {
-              isLiked
-            }
-          `,
+          id: fragmentId,
+          fragment: fragment,
           data: {
-            isLiked: !photo.isLiked
+            isLiked: !isLiked,
+            likes: isLiked ? likesFragment - 1 : likesFragment + 1
           }
         });
       }
     },
-    [photo]
+    [id, isLiked, likes]
   );
 
   const [toggleLikeMutation] = useMutation<toggleLike, toggleLikeVariables>(
     TOGGLE_LIKE_MUTATION,
     {
       variables: {
-        id: photo.id
+        id: id
       },
       update: updateToggleLike
     }
@@ -107,10 +114,10 @@ function Photo(photo: seeFeed_seeFeed_photos) {
   return (
     <PhotoContainer>
       <PhotoHeader>
-        <Avatar url={photo.user?.avatar || ""} lg />
-        <Username>{photo.user?.username}</Username>
+        <Avatar url={user?.avatar || ""} lg />
+        <Username>{user?.username}</Username>
       </PhotoHeader>
-      <PhotoFile src={photo.file} />
+      <PhotoFile src={file} />
       <PhotoData>
         <PhotoActions>
           <div>
@@ -120,8 +127,8 @@ function Photo(photo: seeFeed_seeFeed_photos) {
               }}
             >
               <FontAwesomeIcon
-                style={{ color: photo.isLiked ? "tomato" : "inherit" }}
-                icon={photo.isLiked ? SolidHeart : faHeart}
+                style={{ color: isLiked ? "tomato" : "inherit" }}
+                icon={isLiked ? SolidHeart : faHeart}
               />
             </PhotoAction>
             <PhotoAction>
@@ -136,10 +143,10 @@ function Photo(photo: seeFeed_seeFeed_photos) {
           </div>
         </PhotoActions>
         <Likes>
-          {photo.likes && photo.likes > 1
-            ? `${photo.likes} likes`
-            : photo.likes
-            ? `${photo.likes} like`
+          {likes && likes > 1
+            ? `${likes} likes`
+            : likes
+            ? `${likes} like`
             : `0 like`}
         </Likes>
       </PhotoData>
