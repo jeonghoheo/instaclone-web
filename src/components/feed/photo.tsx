@@ -9,13 +9,17 @@ import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
 import styled from "styled-components";
-import { seeFeed_seeFeed_photos } from "../../__generated__/seeFeed";
+import {
+  seeFeed_seeFeed_photos,
+  seeFeed_seeFeed_photos_comments_user
+} from "../../__generated__/seeFeed";
 import {
   toggleLike,
   toggleLikeVariables
 } from "../../__generated__/toggleLike";
 import Avatar from "../avatar";
 import { FatText } from "../shared";
+import Comments from "./comments";
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -73,22 +77,6 @@ const PhotoAction = styled.div`
 const Likes = styled(FatText)`
   margin-top: 15px;
   display: block;
-`;
-
-const Comments = styled.div`
-  margin-top: 20px;
-`;
-const Comment = styled.div``;
-const CommentCaption = styled.span`
-  margin-left: 10px;
-`;
-
-const CommentCount = styled.span`
-  opacity: 0.7;
-  margin: 10px 0px;
-  display: block;
-  font-weight: 600;
-  font-size: 10px;
 `;
 
 function Photo({
@@ -175,15 +163,12 @@ function Photo({
             ? `${likes} like`
             : `0 like`}
         </Likes>
-        <Comments>
-          <Comment>
-            {user ? <FatText>{user.username}</FatText> : null}
-            <CommentCaption>{caption}</CommentCaption>
-          </Comment>
-          <CommentCount>
-            {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
-          </CommentCount>
-        </Comments>
+        <Comments
+          author={(user as seeFeed_seeFeed_photos_comments_user).username}
+          payload={caption}
+          commentNumber={commentNumber as number}
+          comments={comments}
+        />
       </PhotoData>
     </PhotoContainer>
   );
