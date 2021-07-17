@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import sanitizeHtml from "sanitize-html";
+import { Fragment } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { FatText } from "../shared";
 
@@ -11,7 +11,7 @@ interface IProps {
 const CommentContainer = styled.div``;
 const CommentCaption = styled.span`
   margin-left: 10px;
-  mark {
+  a {
     background-color: inherit;
     color: ${(props) => props.theme.accent};
     cursor: pointer;
@@ -22,24 +22,20 @@ const CommentCaption = styled.span`
 `;
 
 function Comment({ author, payload }: IProps) {
-  const cleanedPayload = useMemo(
-    () =>
-      sanitizeHtml(
-        payload.replace(/#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/g, "<mark>$&</mark>"),
-        {
-          allowedTags: ["mark"]
-        }
-      ),
-    [payload]
-  );
   return (
     <CommentContainer>
       <FatText>{author}</FatText>
-      <CommentCaption
-        dangerouslySetInnerHTML={{
-          __html: cleanedPayload
-        }}
-      ></CommentCaption>
+      <CommentCaption>
+        {payload.split(" ").map((word, index) =>
+          /#[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|\w]+/.test(word) ? (
+            <Fragment key={index}>
+              <Link to={`/hashtags/${word}`}>{word}</Link>{" "}
+            </Fragment>
+          ) : (
+            <Fragment key={index}>{word} </Fragment>
+          )
+        )}
+      </CommentCaption>
     </CommentContainer>
   );
 }
