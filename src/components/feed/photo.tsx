@@ -95,20 +95,19 @@ function Photo({
         toggleLike: { ok }
       } = result.data as toggleLike;
       if (ok) {
-        const likesFragment = likes ? likes : 0;
-        const fragmentId = `Photo:${id}`;
-        const fragment = gql`
-          fragment isLike on Photo {
-            isLiked
-            likes
-          }
-        `;
-        cache.writeFragment({
-          id: fragmentId,
-          fragment: fragment,
-          data: {
-            isLiked: !isLiked,
-            likes: isLiked ? likesFragment - 1 : likesFragment + 1
+        const photoId = `Photo:${id}`;
+        cache.modify({
+          id: photoId,
+          fields: {
+            isLiked(prev) {
+              return !prev;
+            },
+            likes(prev) {
+              if (isLiked) {
+                return prev - 1;
+              }
+              return prev + 1;
+            }
           }
         });
       }
