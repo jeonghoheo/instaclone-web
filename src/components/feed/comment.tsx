@@ -8,7 +8,9 @@ interface IProps {
   payload: string;
 }
 
-const CommentContainer = styled.div``;
+const CommentContainer = styled.div`
+  margin-bottom: 7px;
+`;
 const CommentCaption = styled.span`
   margin-left: 10px;
   a {
