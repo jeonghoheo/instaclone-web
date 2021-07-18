@@ -78,7 +78,7 @@ function Comments({
       if (ok && userData?.me) {
         const newComment = {
           __typename: "Comment",
-          createdAt: Date.now().toString(),
+          createdAt: Date.now() + "",
           id,
           isMine: true,
           payload,
@@ -124,7 +124,9 @@ function Comments({
   );
   return (
     <CommentsContainer>
-      {author && payload && <Comment author={author} payload={payload} />}
+      {author && payload && (
+        <Comment author={author} photoId={photoId} payload={payload} />
+      )}
       <CommentCount>
         {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
       </CommentCount>
@@ -132,6 +134,9 @@ function Comments({
         <Comment
           key={comment.id}
           author={comment.user.username}
+          photoId={photoId}
+          id={comment.id}
+          isMine={comment.isMine}
           payload={comment.payload}
         />
       ))}
