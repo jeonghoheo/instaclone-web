@@ -112,7 +112,7 @@ function Photo({
         });
       }
     },
-    [id, isLiked, likes]
+    [id, isLiked]
   );
 
   const [toggleLikeMutation] = useMutation<toggleLike, toggleLikeVariables>(
@@ -167,6 +167,7 @@ function Photo({
           payload={caption}
           commentNumber={commentNumber as number}
           comments={comments}
+          photoId={id}
         />
       </PhotoData>
     </PhotoContainer>
