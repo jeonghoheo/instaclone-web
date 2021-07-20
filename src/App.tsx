@@ -8,6 +8,7 @@ import routes from "./routes";
 import Home from "./screens/home";
 import Login from "./screens/login";
 import NotFound from "./screens/not-found";
+import Profile from "./screens/profile";
 import SignUp from "./screens/signup";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 
@@ -35,6 +36,9 @@ function App() {
                   <SignUp />
                 </Route>
               ) : null}
+              <Route path={routes.profile}>
+                <Profile />
+              </Route>
               <Route>
                 <NotFound />
               </Route>
