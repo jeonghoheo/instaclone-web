@@ -3,6 +3,7 @@ import { useHistory } from "react-router";
 import { logUserOut } from "../apollo";
 import PageTitle from "../components/auth/page-title";
 import Photo from "../components/feed/photo";
+import { COMMENT_FRAGMENT, PHOTO_FRAGMENT } from "../fragments";
 import { seeFeed } from "../__generated__/seeFeed";
 
 const FEED_QUERY = gql`
@@ -11,31 +12,22 @@ const FEED_QUERY = gql`
       ok
       error
       photos {
-        id
-        isLiked
+        ...PhotoFragment
         user {
           username
           avatar
         }
-        file
         caption
-        likes
         comments {
-          id
-          user {
-            username
-            avatar
-          }
-          payload
-          isMine
-          createdAt
+          ...CommentFragment
         }
-        commentNumber
         createdAt
         isMine
       }
     }
   }
+  ${PHOTO_FRAGMENT}
+  ${COMMENT_FRAGMENT}
 `;
 
 function Home() {

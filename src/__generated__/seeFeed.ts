@@ -31,13 +31,13 @@ export interface seeFeed_seeFeed_photos_comments {
 export interface seeFeed_seeFeed_photos {
   __typename: "Photo";
   id: number;
+  file: string;
+  likes: number | null;
+  commentNumber: number | null;
   isLiked: boolean | null;
   user: seeFeed_seeFeed_photos_user | null;
-  file: string;
   caption: string | null;
-  likes: number | null;
   comments: seeFeed_seeFeed_photos_comments[] | null;
-  commentNumber: number | null;
   createdAt: any;
   isMine: boolean | null;
 }
