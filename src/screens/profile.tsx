@@ -33,7 +33,6 @@ function Profile() {
       username
     }
   });
-  console.log(data);
   return <div>profile</div>;
 }
 
