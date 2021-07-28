@@ -4,7 +4,7 @@ import { isLoggedInVar, logUserOut } from "../apollo";
 import { me } from "../__generated__/me";
 import { useHistory } from "react-router-dom";
 
-const ME_QUERY = gql`
+export const ME_QUERY = gql`
   query me {
     me {
       ok
@@ -13,6 +13,8 @@ const ME_QUERY = gql`
         id
         username
         avatar
+        totalFollowing
+        totalFollowers
       }
     }
   }

@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback } from "react";
@@ -8,6 +8,7 @@ import Button from "../components/auth/button";
 import PageTitle from "../components/auth/page-title";
 import { FatText } from "../components/shared";
 import { PHOTO_FRAGMENT } from "../fragments";
+import useUser from "../hooks/useUser";
 import {
   seeProfile,
   seeProfileVariables,
@@ -23,8 +24,8 @@ const FOLLOW_USER_MUTATION = gql`
 `;
 
 const UNFOLLOW_USER_MUTATION = gql`
-  mutation unfollowUser($username: String!) {
-    unfollowUser(username: $username) {
+  mutation unFollowUser($username: String!) {
+    unFollowUser(username: $username) {
       ok
     }
   }
@@ -141,6 +142,7 @@ const ProfileBtn = styled(Button).attrs({
 
 function Profile() {
   const { username }: { username: string } = useParams();
+  const { data: userData } = useUser();
   const { data, loading } = useQuery<seeProfile, seeProfileVariables>(
     SEE_PROFILE_QUERY,
     {
@@ -149,15 +151,25 @@ function Profile() {
       }
     }
   );
+  const [unfollowUser] = useMutation(UNFOLLOW_USER_MUTATION, {
+    variables: {
+      username
+    }
+  });
+  const [followUser] = useMutation(FOLLOW_USER_MUTATION, {
+    variables: {
+      username
+    }
+  });
   const getButton = useCallback((seeProfile: seeProfile_seeProfile_user) => {
     const { isMe, isFollowing } = seeProfile;
     if (isMe) {
       return <ProfileBtn>Edit Profile</ProfileBtn>;
     }
     if (isFollowing) {
-      return <ProfileBtn>UnFollow</ProfileBtn>;
+      return <ProfileBtn onClick={() => unfollowUser()}>UnFollow</ProfileBtn>;
     } else {
-      return <ProfileBtn>Follow</ProfileBtn>;
+      return <ProfileBtn onClick={() => followUser()}>Follow</ProfileBtn>;
     }
   }, []);
 

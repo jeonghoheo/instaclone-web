@@ -12,6 +12,8 @@ export interface me_me_me {
   id: number;
   username: string;
   avatar: string | null;
+  totalFollowing: number;
+  totalFollowers: number;
 }
 
 export interface me_me {
