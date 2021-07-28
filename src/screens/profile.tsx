@@ -14,7 +14,9 @@ import Button from "../components/auth/button";
 import PageTitle from "../components/auth/page-title";
 import { FatText } from "../components/shared";
 import { PHOTO_FRAGMENT } from "../fragments";
+import useUser from "../hooks/useUser";
 import { followUser } from "../__generated__/followUser";
+import { me_me } from "../__generated__/me";
 import {
   seeProfile,
   seeProfileVariables,
@@ -149,6 +151,7 @@ const ProfileBtn = styled(Button).attrs({
 
 function Profile() {
   const { username }: { username: string } = useParams();
+  const { data: userData } = useUser();
   const client = useApolloClient();
   const { data, loading } = useQuery<seeProfile, seeProfileVariables>(
     SEE_PROFILE_QUERY,
@@ -178,8 +181,17 @@ function Profile() {
           }
         }
       });
+      const { me } = userData?.me as me_me;
+      cache.modify({
+        id: `User:${me?.username}`,
+        fields: {
+          totalFollowing(prev) {
+            return prev - 1;
+          }
+        }
+      });
     },
-    [username]
+    [username, userData]
   );
 
   const [unfollowUser] = useMutation(UNFOLLOW_USER_MUTATION, {
@@ -209,8 +221,17 @@ function Profile() {
           }
         }
       });
+      const { me } = userData?.me as me_me;
+      cache.modify({
+        id: `User:${me?.username}`,
+        fields: {
+          totalFollowing(prev) {
+            return prev + 1;
+          }
+        }
+      });
     },
-    [client, username]
+    [client, username, userData]
   );
 
   const [followUser] = useMutation<followUser>(FOLLOW_USER_MUTATION, {
