@@ -13,8 +13,6 @@ export const ME_QUERY = gql`
         id
         username
         avatar
-        totalFollowing
-        totalFollowers
       }
     }
   }
